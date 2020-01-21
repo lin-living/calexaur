@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'test flutter'),
     );
   }
 }
@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter += 1;
     });
   }
 
@@ -70,6 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: <Widget>[
+          MaterialButton(
+            onPressed: _incrementCounter,
+            child: Text("test"),
+          ),
+          
+          MaterialButton(
+            onPressed: _incrementCounter,
+            child: Icon(Icons.camera),
+          )
+
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -89,14 +101,50 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              '\n You have taped the button this many times:',
+              style: Theme.of(context).textTheme.subtitle,
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.title,
+            ),
+            MaterialButton(
+              onPressed: _incrementCounter,
+              child: Row(
+                children: [
+                  Icon(Icons.add),
+                  Text(
+                    ' Good Job!',
+                    style: Theme.of(context).textTheme.title,
+                  )
+                ],
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              ),
+              color: Colors.orange,
+              splashColor: Colors.deepOrange,
+            ),
+            MaterialButton(
+              onPressed: _incrementCounter,
+              child: Row(
+                children: [
+                  Icon(Icons.add),
+                  Text(
+                    ' Good Job!',
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  SizedBox(
+                    width: 100,
+                    height: 20,
+                    child: Text("test"),
+                  ),
+                ],
+              ),
+              color: Colors.blue,
+              splashColor: Colors.indigo,
             ),
           ],
         ),
@@ -104,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: Icon(Icons.camera),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
