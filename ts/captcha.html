@@ -1,0 +1,175 @@
+<head>
+    <title>系統權限管理</title>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel="stylesheet" href="/js/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <!-- Google Fonts Roboto -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+
+    <script> var require = { baseUrl: '/js', paths: { d3: 'd3.min', "socket.io-client": 'socket.io' } };</script>
+    <script data-main="test.js" src="/js/require.js"></script>
+</head>
+<body>
+    <div id="pages" class="container">
+        <br>
+        <div id="account">
+            <h3 class="col text-center">
+                系統權限管理
+            </h3>
+            <div class="row">
+                <h4 class="col" style="color:rebeccapurple;">
+                    <div class="btn-group record-function">
+                        <i class="tt-function mx-1 fas fa-plus-square"></i>
+                        <i class="tt-function mx-1 fas fa-trash-alt"></i>
+                        <i class="tt-function mx-1 fas fa-save"></i>
+                        <input type="text" class="skey rounded bg-light" style="font-size: 16;">
+                        <i class="tt-function mx-1 fas fa-search"></i>
+                        <i class="tt-function mx-1 fas fa-step-backward"></i>
+                        <i class="tt-function mx-1 fas fa-backward"></i>
+                        <i class="tt-function mx-1 fas fa-forward"></i>
+                    <i class="tt-function mx-1 fas fa-step-forward"></i>
+                    </div>
+                </h4>
+    
+                <h4 class="col " style="color:rebeccapurple;">
+                    <div class="btn-group float-right page-function">
+                        <i class="tt-function mx-1 fas fa-history d-none"></i>
+                        <i class="tt-function mx-1 fas fa-undo-alt"></i>
+                        <i class="tt-function mx-1 fas fa-file-csv"></i>
+                        <img class="tt-function mx-1" src="/img/print.png" style="width: 24; height: 24;">
+                        <i class="tt-function mx-1 fas fa-home"></i>
+                        <i class="tt-function mx-1 fas fa-sign-out-alt"></i>
+                    </div>
+                </h4>
+            </div>
+
+
+            <a href=""></a>
+
+            <table class="table table-sm table-light table-striped table-fixed" >
+                <thead class="thead-light">
+                    <tr>
+                        <th fname="selected" style="width: 20;"></th>
+                        <th fname="status" colSelectItems="生效;審核;停用" style="width: 60;">狀態</th>
+                        <th fname="attr.empid" colSelectItems="a;b"  style="width: 60px;">工號</th>                            
+                        <th fname="attr.name" colSelectItems="a;b"  style="width: 80px;">姓名</th>  
+                        <th fname="id" colInputType="text" style="width: 120;">帳號</th>
+                        <th fname="attr.systemrole" colSelectItems="最高權限;專屬權限;主管;人事專員;品檢;操作員" style="width: 100px;">權限等級</th>                        
+                        <th fname="attr.createdt" colInputType="text"" style="width: 120;">建立時間</th>
+                        <th fname="attr.remark" colInputType="text" style="width: 200px;">備註</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>&ThinSpace;</tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                </tbody>
+            </table>
+            <div class="float-right"><i class="mx-1 fas fa-comment-dots"></i> <span class='log'></span></h4> </div>
+        </div>
+    </div>        
+
+    
+    <script id="__afterloaded">
+        let acc;
+        let userInfo;
+        let timer;
+        function init(){
+            tc.stmt("hr_user_get",{},)
+            tc.stmt("hr_user_get",{},data=>{
+                data.forEach(d => {
+                    d.attr = JSON.parse(d.attr);
+//                    userInfo[d["id"]] = d;
+                });
+                userInfo = data;
+
+            });
+            acc =  
+            new ttable(
+                tc,
+                "test",
+                "#account",
+                {
+                    get: { stmt: "internal_user_get", param: {} },
+                    new: { stmt: "internal_user_new", param: {} },
+                    delete: { stmt: "internal_user_delete", param: {} },
+                    update: { stmt: "internal_user_update", param: {} }
+                },
+                {"id":null,"password":"nwe","name":"","team":"" ,"status":"","roles":0,workyear:0,"attr":{}},
+                (data, changeFieldName, newvalue) => { //after edit
+                    data.attr.cmpname = tc.userInfo.attr.cmpname;
+                    if (! data.attr.createdt) {
+                            let dt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().split('T')
+                            data.attr.createdt = dt[0]+ " "+dt[1].substr(0,5);
+                    };
+                    if (changeFieldName == "attr.empid"){
+                        userInfo.forEach(d=>{
+                            if (d.id == newvalue) data.attr.name = d.attr.name;
+                        })
+                    } 
+                    else if (changeFieldName == "attr.systemrole"){
+                       if (!["最高權限","專屬權限","主管","人事專員","品檢","操作員"].includes(newvalue)){
+                           alert("權限等級沒有選,或權限不存在！")
+                           return data.attr.systemrole
+                       }
+                    }
+                },   
+                [{fieldname:"attr.empid",reverse:false}] 
+            );
+            acc.beforeedit = (inp, changeFieldName, data) => { //before edit
+                if (changeFieldName == "attr.empid" ) {
+                    let ff = acc.data.map(d=>d.attr.empid);
+                    inp.select("datalist").selectAll("option").remove();
+                    inp.select("datalist").selectAll("option")
+                    .data(userInfo.filter(d=>!ff.includes(d.id)))
+                    .enter().append("option").html(d => d.id);
+                } 
+                else if (changeFieldName == "attr.name" ) {
+                    let ff = acc.data.map(d=>d.attr.name);
+                    inp.select("datalist").selectAll("option").remove();
+                    inp.select("datalist").selectAll("option")
+                    .data(userInfo.filter(d=>!ff.includes(d.attr.name)))
+                    .enter().append("option").html(d => d.attr.name);
+                } 
+            }
+
+            acc.beforesave = ()=>{ // return reject
+                //{"empty":false,"duplicated":false,"changed":false,"deleted": false,value:""}
+                let rr = false;
+                
+                let ck= acc.checkfieldstatus("id");
+                if (ck.empty) {alert(`帳號 不可以空白！[${ck.value}]`); rr=true};
+                if (ck.duplicated ) {alert(`帳號 不可以重複！[${ck.value}]`); rr=true};
+                let ck1= acc.checkfieldstatus("attr.empid");
+                if (ck1.empty) {alert(`工號 不可以空白！[${ck1.value}]`); rr=true};
+                if (ck1.duplicated ) {alert(`工號 不可以重複！[${ck1.value}]`); rr=true};
+                let ck2= acc.checkfieldstatus("attr.systemrole");
+                if (ck2.empty) {alert(`權限等級沒有選！[${ck2.value}]`); rr=true};
+                // if (ck.changed ) {alert(`帳號 不可以修改！[${ck.value}]`); rr=true};
+                // if (ck.deleted ) {alert(`帳號 不可以刪除!`); rr=true};
+                return rr;
+            }
+
+        };
+
+        init();
+
+    </script>
+
+</body>

@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+		"problemMatcher": [],
+			"label": "npm: build",
+			"detail": "rollup -c"
+		}
+		// ,
+		// {
+		// 	"label": "release current file",
+		// 	"type": "shell",
+		// 	"command": "./node_modules/rollup/dist/bin/rollup",
+		// 	"args": [
+		// 		"-c",
+		// 		"-i","${file}",
+		// 		"-o", "./html/build/${fileBasenameNoExtension}.js",
+		// 		"-p", "",
+		// 	],
+		// 	"problemMatcher": [],
+		// 	"group": "build",
+		// 	// "group": {
+		// 	// 	"kind": "build",
+		// 	// 	"isDefault": true
+		// 	// }
+		// },
+
+	]
+}
